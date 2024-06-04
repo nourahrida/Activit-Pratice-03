@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorate="template.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Students</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="text-center my-4">Students</h1>
+    <hr />
+    <div class="container">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Birthdate</th>
+                <th>Age</th>
+                <th>Address</th>
+<!--                <th>Phone Number</th>-->
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student : ${students}">
+                <td th:text="${student.id}"></td>
+                <td th:text="${student.fname}"></td>
+                <td th:text="${student.lname}"></td>
+                <td th:text="${student.email}"></td>
+                <td th:text="${student.birthdate}"></td>
+                <td th:text="${student.age}"></td>
+                <td th:text="${student.address.streetAddress} + ', ' + ${student.address.city} + '/ ' + ${student.address.state} + ', ' + ${student.address.postalCode}"></td>
+<!--                <td th:text="${student.phoneNumber.number}"></td>-->
+                <td>
+                    <!-- Display edit and delete buttons only for admin users -->
+                    <div sec:authorize="hasRole('ADMIN')" class="d-flex justify-content-center">
+                        <a th:href="@{/edit/{id}(id=${student.id})}"
+                           class="btn btn-warning btn-sm m-2">Edit</a>
+                        <form th:action="@{/delete}" method="post" style="display:inline;">
+                            <input type="hidden" name="studentId" th:value="${student.id}" />
+                            <button type="submit" class="btn btn-danger btn-sm m-2">Delete</button>
+                        </form>
+                    </div>
+                    <div sec:authorize="hasRole('USER')">
+                        <p class="text-danger fw-bold text-center">NO ACTION PROVIDED</p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- Display add new student button only for admin users -->
+        <div sec:authorize="hasRole('ADMIN')">
+            <a href="#" th:href="@{/addStudent}" class="btn btn-primary">Add New Student</a>
+        </div>
+</div>
+</div>
+</body>
+</html>
